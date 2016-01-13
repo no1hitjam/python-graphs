@@ -1,4 +1,5 @@
 from collections import defaultdict
+from collections import deque
 
 from main import TreeNode
 
@@ -28,7 +29,7 @@ def get_tree(parents, graph):
         raise Exception('Did not find single tree')
 
 
-def dfs(start, graph):
+def simple_dfs(start, graph):
     marked = set()
 
     def basic_dfs_rec(vertex):
@@ -41,7 +42,7 @@ def dfs(start, graph):
     return marked
 
 
-def dfs_tree(start, graph):
+def dfs(start, graph):
     marked = set()
     parents = defaultdict(list)
 
@@ -58,4 +59,18 @@ def dfs_tree(start, graph):
     return get_tree(parents, graph)
 
 
+def bfs(start, graph):
+    marked = set()
+    queue = deque()
+    parents = defaultdict(list)
 
+    queue.append(None, start)  # put (NULL, s) in bag
+    while len(queue) > 0:
+        parent, vertex = queue.popleft()
+        if vertex not in marked:
+            marked.add(vertex)
+            parents[parent].append(vertex)
+            for neighbor in graph.edges[vertex]:
+                queue.append(vertex, neighbor.vertex)
+
+    return get_tree(parents, graph)
