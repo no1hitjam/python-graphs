@@ -1,5 +1,3 @@
-
-
 from collections import defaultdict
 from collections import deque
 
@@ -7,16 +5,18 @@ from main import TreeNode
 
 
 def get_forest(parents, graph):
+    marked = set()
     trees = set()
 
     def add_children(node):
-        for child in parents[node]:
-            child_node = TreeNode(child, set())
+        marked.add(node.vertex)
+        for child in parents[node.vertex]:
+            child_node = TreeNode(child)
             node.children.add(child_node)
             add_children(child_node)
 
-    for start in graph.vertices.difference(parents.keys()):
-        start_node = TreeNode(start, set())
+    while len(graph.vertices.difference(marked)) > 0:
+        start_node = TreeNode(graph.vertices.difference(marked).pop())
         add_children(start_node)
         trees.add(start_node)
 
@@ -52,7 +52,7 @@ def dfs(start, graph):
         marked.add(vertex)
         # pre_visit(v)
         for neighbor in graph.edges[vertex]:
-            if vertex not in marked:
+            if neighbor.vertex not in marked:
                 parents[vertex].append(neighbor.vertex)
                 advanced_dfs_rec(neighbor.vertex)
         # post_visit(v)
