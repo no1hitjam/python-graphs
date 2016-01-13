@@ -1,25 +1,7 @@
-def basic_dfs(vertex, graph):
-    if vertex not in graph.marked:
-        graph.mark(vertex)
-        for neighbor in graph.edges[vertex]:
-            basic_dfs(neighbor.vertex, graph)
-
-
-def advanced_dfs(vertex, graph):
-    graph.mark(vertex)
-    # pre_visit(v)
-    for neighbor in graph.edges[vertex]:
-        if vertex not in graph.marked:
-            graph.parent(neighbor.vertex, vertex)
-            advanced_dfs(neighbor.vertex, graph)
-    # post_visit(v)
-
-
+"""
 class Graph:
     def __init__(self, vertices, edges, directed=False):
         self.vertices = vertices
-        self.marked = set()
-        self.parents = {}
         self.edges = {}
         for edge in edges:
             if edge.v_from in edges:
@@ -32,22 +14,20 @@ class Graph:
                 else:
                     edges[edge.v_to] = {Neighbor(edge.v_from, edge.weight)}
         self.directed = directed
+"""
 
-    def mark(self, vertex):
-        self.marked.add(vertex)
+from collections import defaultdict
 
-    def parent(self, vertex, parent):
-        self.parents[parent] = vertex
 
-    def get_forest(self):
-        def add_children(node):
-            for child in self.parents[node.vertex]:
-                child_node = TreeNode(child, set())
-                node.children.add(child_node)
-                add_children(child_node)
-        for s in self.vertices.difference(self.parents.keys()):
-            start_node = TreeNode(s, set())
-            add_children(start_node)
+class Graph:
+    def __init__(self, vertices, edges, directed=False):
+        self.vertices = vertices
+        self.edges = defaultdict(list)
+        for edge in edges:
+            edges[edge.v_from].append(Neighbor(edge.v_to, edge.weight))
+            if not directed:
+                    edges[edge.v_to].append(Neighbor(edge.v_from, edge.weight))
+        self.directed = directed
 
 
 class Edge:
@@ -67,3 +47,7 @@ class TreeNode:
     def __init__(self, vertex, children):
         self.vertex = vertex
         self.children = children
+
+
+
+
