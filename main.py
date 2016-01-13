@@ -20,13 +20,22 @@ from collections import defaultdict
 
 
 class Graph:
-    def __init__(self, vertices, edges, directed=False):
+    def __init__(self, vertices, edges, directed=False, weighted=False):
         self.vertices = vertices
         self.edges = defaultdict(list)
-        for edge in edges:
-            edges[edge.v_from].append(Neighbor(edge.v_to, edge.weight))
+
+        def append_edge(v_from, v_to, weight):
+            self.edges[v_from].append(Neighbor(v_to, weight))
             if not directed:
-                    edges[edge.v_to].append(Neighbor(edge.v_from, edge.weight))
+                self.edges[v_to].append(Neighbor(v_from, weight))
+
+        if weighted:
+            for v_from, v_to, weight in edges:
+                append_edge(v_from, v_to, weight)
+        else:
+            for v_from, v_to in edges:
+                append_edge(v_from, v_to, None)
+
         self.directed = directed
 
 
