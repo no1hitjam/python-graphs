@@ -31,7 +31,7 @@ def get_tree(parents, graph):
         raise Exception('Did not find single tree')
 
 
-def simple_dfs(start, graph):
+def dfs_marked(start, graph):
     marked = set()
 
     def basic_dfs_rec(vertex):

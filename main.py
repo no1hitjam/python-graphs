@@ -3,22 +3,30 @@ from collections import defaultdict
 
 class Graph:
     def __init__(self, vertices, edges, directed=False, weighted=False):
+        # TODO: use _ prefix and use functions for access.
+        # assume that users won't access raw properties, just functions
         self.vertices = vertices
         self.edges = defaultdict(list)
         self.directed = directed
+        self._weighted = weighted
 
-        def append_edge(v_from, v_to, weight):
-            self.edges[v_from].append(Neighbor(v_to, weight))
+        for v_from, v_to, weight in edges:
+            self.edges[v_from].append(Neighbor(v_to, weight if weighted else None))
             if not directed:
-                self.edges[v_to].append(Neighbor(v_from, weight))
+                self.edges[v_to].append(Neighbor(v_from, weight if weighted else None))
 
-        if weighted:
-            for v_from, v_to, weight in edges:
-                append_edge(v_from, v_to, weight)
-        else:
-            for v_from, v_to in edges:
-                append_edge(v_from, v_to, None)
+        self._update()
 
+    def update(self, vertices=None, edges=None):
+        self.vertices = vertices if vertices is not None else self.vertices
+        self.edges = edges if edges is not None else self.edges
+
+        # self.cyclic = self._test_cyclic()
+        # self.connected = self._test_connected()
+
+    def is_directed(self): return self.directed
+    
+    def is_weighted(self): return self._weighted
 
 class Edge:
     def __init__(self, v_from, v_to, weight=None):
