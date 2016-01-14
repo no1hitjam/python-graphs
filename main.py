@@ -1,21 +1,3 @@
-"""
-class Graph:
-    def __init__(self, vertices, edges, directed=False):
-        self.vertices = vertices
-        self.edges = {}
-        for edge in edges:
-            if edge.v_from in edges:
-                edges[edge.v_from].add(Neighbor(edge.v_to, edge.weight))
-            else:
-                edges[edge.v_from] = {Neighbor(edge.v_to, edge.weight)}
-            if not directed:
-                if edge.v_to in edges:
-                    edges[edge.v_to].add(Neighbor(edge.v_from, edge.weight))
-                else:
-                    edges[edge.v_to] = {Neighbor(edge.v_from, edge.weight)}
-        self.directed = directed
-"""
-
 from collections import defaultdict
 
 
@@ -47,8 +29,8 @@ class Edge:
 
 
 class Neighbor:
-    def __init__(self, to, weight=None):
-        self.to = to
+    def __init__(self, vertex, weight=None):
+        self.vertex = vertex
         self.weight = weight
 
 
