@@ -23,6 +23,7 @@ def test_connected(graph):
     return len(graph.vertices.difference(search.dfs_marked(graph.vertices.pop(), graph))) == 0
 
 
+
 """
 G' is a subgraph of G if V' and E' are subsets of V and E
 Connected components of G are maximal connected subgraph of G

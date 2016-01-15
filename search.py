@@ -1,78 +1,66 @@
+import random
 from collections import defaultdict
 from collections import deque
 
-from main import TreeNode
+from main import Graph
 
 
-def get_forest(parents, graph):
-    marked = set()
-    trees = set()
-
-    def add_children(node):
-        marked.add(node.vertex)
-        for child in parents[node.vertex]:
-            child_node = TreeNode(child)
-            node.children.add(child_node)
-            add_children(child_node)
-
-    while len(graph.vertices.difference(marked)) > 0:
-        start_node = TreeNode(graph.vertices.difference(marked).pop())
-        add_children(start_node)
-        trees.add(start_node)
-
-    return trees
-
-
-def get_tree(parents, graph):
-    forest = get_forest(parents, graph)
-    if len(forest) == 1:
-        return forest.pop()
-    else:
-        raise Exception('Did not find single tree')
-
-
-def dfs_marked(start, graph):
-    marked = set()
-
-    def basic_dfs_rec(vertex):
-        if vertex not in marked:
-            marked.add(vertex)
-            for neighbor in graph.edges[vertex]:
-                basic_dfs_rec(neighbor.vertex)
-
-    basic_dfs_rec(start)
-    return marked
-
-
-def dfs(start, graph):
-    marked = set()
-    parents = defaultdict(list)
-
-    def advanced_dfs_rec(vertex):
-        marked.add(vertex)
-        # pre_visit(v)
-        for neighbor in graph.edges[vertex]:
-            if neighbor.vertex not in marked:
-                parents[vertex].append(neighbor.vertex)
-                advanced_dfs_rec(neighbor.vertex)
-        # post_visit(v)
-
-    advanced_dfs_rec(start)
-    return get_tree(parents, graph)
-
-
-def bfs(start, graph):
+def bfs(graph, start):
     marked = set()
     queue = deque()
-    parents = defaultdict(list)
+    edges = set()
 
-    queue.append(None, start)  # put (NULL, s) in bag
+    queue.append(None, start)
     while len(queue) > 0:
         parent, vertex = queue.popleft()
         if vertex not in marked:
             marked.add(vertex)
-            parents[parent].append(vertex)
+            edges.add((parent, vertex))
             for neighbor in graph.edges[vertex]:
                 queue.append(vertex, neighbor.vertex)
 
-    return get_tree(parents, graph)
+    return Graph(graph.get_vertices(), edges, True)
+
+
+def topological_sort(graph, start=None, process=None):
+    class Status:
+        new = 0
+        active = 1
+        done = 2
+
+    statuses = {}
+    order = []
+    tree_edges = set()
+    source = 'source'
+    vertices = graph.get_vertices()
+    edges = graph.get_edges()
+
+    if start is None:
+        start = source
+        vertices.add(source)
+        # add edges from source to all vertices
+        for vertex in graph.get_vertices():
+            edges.add((source, vertex))
+            statuses[vertex] = Status.new
+
+    def topological_sort_dfs(vertex, graph):
+        statuses[vertex] = Status.active
+        for edge in graph.get_edges()[vertex]:
+            if statuses[edge.v_to] == Status.new:
+                topological_sort_dfs(edge.v_to, graph)
+            elif statuses[edge.v_to] == Status.active:
+                return None  # failure
+        statuses[vertex] = Status.done
+        order.append(vertex)
+        if process is not None:
+            process(vertex)
+
+    topological_sort_dfs(start, Graph(vertices, edges))
+    order.reverse()
+    return order
+
+
+
+
+
+
