@@ -2,7 +2,6 @@
 Week 1
 Tuesday
 """
-import search
 
 
 """
@@ -11,16 +10,6 @@ Vertices are neighbors if they have an edge between
 Walk between vertices if edges connected through
 Path: walk with no repeated vertex
 """
-
-
-def test_path(vertex1, vertex2, graph):
-    marked = search.dfs_marked(vertex1, graph)
-    return vertex2 in marked
-
-
-# G is connected if there is path between any two vertices
-def test_connected(graph):
-    return len(graph.vertices.difference(search.dfs_marked(graph.vertices.pop(), graph))) == 0
 
 
 
